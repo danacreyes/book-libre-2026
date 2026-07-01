@@ -1,0 +1,52 @@
+# Render asigna el puerto por la env var PORT; local cae a 8080.
+server:
+  port: ${PORT:8080}
+
+spring:
+  #   base de datos posta
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/booklibre}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 5000
+      initialization-fail-timeout: 1
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      # Local: create-drop (esquema limpio en cada corrida). En la nube conviene `update`
+      # para no dropear/recrear en cada cold start (el bootstrap es idempotente y reseed-ea).
+      ddl-auto: ${JPA_DDL_AUTO:create-drop}
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  # base documental
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://admin:admin@127.0.0.1:27019/book_libre?authSource=admin}
+      # uri para cluster shardeado:
+#      uri: mongodb://127.0.0.1:27117,127.0.0.1:27118/book_libre
+      auto-index-creation: true
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      # Render Key Value exige auth; local sin password (default vacío)
+      password: ${REDIS_PASSWORD:}
+
+# Para activar el Trace
+logging:
+  level:
+    root: INFO
+    com.zaxxer.hikari: DEBUG
+    org.postgresql: DEBUG
+    org.springframework.data: DEBUG
+    org.mongodb.driver.protocol.command: DEBUG
+
+jwt:
+  key: ${JWT_KEY}
+  access-token-expiration: 900000
+  refresh-token-expiration: 1800000
