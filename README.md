@@ -13,11 +13,22 @@
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
 
----
-
 ## Objetivo Académico
 
 BookLibre es el proyecto final integrador de la materia **Programación con Herramientas de Modernas (PHM)** de la [Universidad Nacional de San Martín (UNSAM)](https://www.unsam.edu.ar/), cursada durante el primer cuatrimestre de 2026. El proyecto fue construido de forma incremental y didactica para aplicar en la práctica cada tecnología de persistencia vista en la materia:
+
+---
+## Demo
+
+https://github.com/user-attachments/assets/f1361d0d-b9c1-4d68-a1bc-73ec9c22b7ac
+
+La demo recorre el flujo completo de la aplicación desde tres perspectivas:
+
+**Lector** — Se explora el catálogo con los filtros combinados del Home (género, rango de páginas, fechas de disponibilidad, ISBN). Al entrar al detalle de un libro se reserva en un rango de fechas; una vez confirmada la reserva, esas fechas quedan bloqueadas en el calendario y no pueden volver a seleccionarse, y los bibliokarmas del usuario se actualiza. Desde la página de perfil del lector se muestra la gestión de libros propios: filtrado, eliminación y edición. También se navega por las distintas vistas del perfil y se realiza un cambio de datos personales.
+
+**Reseña** — Se califica un libro devuelto con una puntuación y comentario. Inmediatamente después se ingresa al detalle del libro y se verifica que la nueva reseña aparece publicada, la puntuación del libro se actualiza, mostrando el ciclo completo: reserva → devolución → calificación → visibilidad en el catálogo.
+
+**Administrador** — Se ingresa con el usuario admin al panel de control y se navega por las métricas del dashboard. En la sección de **Actividad Reciente** se observa que las reservas realizadas durante la demo figuran en el feed en tiempo real, conectando las tres capas de persistencia (Redis, MongoDB y PostgreSQL) en una sola pantalla.
 
 ---
 
@@ -49,16 +60,16 @@ BookLibre implementa **persistencia políglota**: cada tipo de dato se almacena 
 ┌─────────────────────────▼────────────────────────────────────────┐
 │                     Spring Boot 3 (Kotlin)                       │
 │                                                                  │
-│  ┌──────────────┐  ┌───────────────┐  ┌──────────────────────┐  │
-│  │   REST API   │  │  GraphQL API  │  │  JWT Security Filter │  │
-│  │ (Controllers)│  │ (Netflix DGS) │  │                      │  │
-│  └──────┬───────┘  └──────┬────────┘  └──────────────────────┘  │
+│  ┌──────────────┐  ┌───────────────┐  ┌──────────────────────┐   │
+│  │   REST API   │  │  GraphQL API  │  │  JWT Security Filter │   │
+│  │ (Controllers)│  │ (Netflix DGS) │  │                      │   │
+│  └──────┬───────┘  └──────┬────────┘  └──────────────────────┘   │
 │         └─────────────────┤                                      │
 │                    ┌──────▼──────────────────────────────────┐   │
-│                    │             Services                     │   │
-│                    │  Book · Reservation · User · Auth        │   │
-│                    │  BookCache · ClickRanking · OpenLibrary  │   │
-│                    └──┬─────────────────┬──────────────┬──────┘   │
+│                    │             Services                    │   │
+│                    │  Book · Reservation · User · Auth       │   │
+│                    │  BookCache · ClickRanking · OpenLibrary |   │
+│                    └──┬─────────────────┬──────────────┬─────┘   │
 └───────────────────────┼─────────────────┼──────────────┼─────────┘
                         │                 │              │
              ┌──────────▼──┐   ┌──────────▼──┐   ┌──────▼───────┐
@@ -264,4 +275,5 @@ La aplicación está desplegada en **Render** con la siguiente topología:
 **Dana Cossettini Reyes** - 
 Estudiante avanzada de Programación Informática - 
 📧 dana2004c.r@gmail.com
+
 **Institución:** Universidad Nacional de San Martín (UNSAM) · **Año:** 2026
