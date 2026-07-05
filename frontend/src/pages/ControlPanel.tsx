@@ -11,10 +11,19 @@ import { useState } from "react"
 import type { BookConversion } from "@/domain/graphql/BookConversion"
 import { showToast } from "@/utils/toast"
 import type { BookTypeCalification } from "@/domain/graphql/BookTypeCalification"
-import type { CatalogHealth } from "@/domain/graphql/CatalogHealth"
 import { BookTypeLabels } from "@/types/bookType"
+import { timeAgo } from "@/utils/formatDate"
 
 /* ===== Datos hardcodeados (sin services / endpoints por ahora) ===== */
+
+const TOTAL_BOOKS = 200
+
+const catalogStatus: Segment[] = [
+  { label: "Prestados", value: 42, color: "bg-orange-500" },
+  { label: "Nunca reservados", value: 88, color: "bg-neutral-500" },
+  { label: "Reserva a futuro", value: 30, color: "bg-green-500" },
+  { label: "Devueltos", value: 40, color: "bg-red-400" },
+]
 
 const conversionsBarColors = [
   { barColor: "bg-blue-800" },
@@ -59,53 +68,11 @@ const leaderboard = [
 
 const MAX_SCORE = 5
 
-const recentActivity: Activity[] = [
-  {
-    type: "alta",
-    book: "Pedro Páramo",
-    owner: "Juan Pérez",
-    time: "hace 5 min",
-  },
-  {
-    type: "reserva",
-    text: "Reserva de Ficciones · Mateo R.",
-    time: "hace 22 min",
-  },
-  { type: "alta", book: "El túnel", owner: "Lucía Gómez", time: "hace 1 h" },
-  { type: "reserva", text: "Reserva de Rayuela · Sofía M.", time: "hace 2 h" },
-]
-
 export default function ControlPanel() {
   const [conversions, setConversions] = useState<BookConversion[]>([])
   const [maxRate, setMaxRate] = useState(0.0)
   const [calification, setCalification] = useState<BookTypeCalification[]>([])
-  const [catalogHealth, setCatalogHealth] = useState<CatalogHealth | null>(null)
-
-  // Buckets disjuntos...
-  const catalogStatus: Segment[] = catalogHealth
-    ? [
-        {
-          label: "Prestados",
-          value: catalogHealth.prestados,
-          color: "bg-orange-500",
-        },
-        {
-          label: "Nunca reservados",
-          value: catalogHealth.disponiblesNuncaReservados,
-          color: "bg-neutral-500",
-        },
-        {
-          label: "Reserva a futuro",
-          value: catalogHealth.disponiblesReservadosAFuturo,
-          color: "bg-green-500",
-        },
-        {
-          label: "Devueltos",
-          value: catalogHealth.disponiblesDevueltos,
-          color: "bg-red-400",
-        },
-      ]
-    : []
+  const [recentActivity, setRecentActivity] = useState<Activity[]>([])
 
   const getConversionRate = async () => {
     try {
@@ -130,10 +97,21 @@ export default function ControlPanel() {
     }
   }
 
-  const getCatalogHealth = async () => {
+  const getRecentActivity = async () => {
     try {
-      const response = await graphqlService.getCatalogHealth()
-      setCatalogHealth(response)
+      const events = await graphqlService.getRecentActivity()
+      setRecentActivity(
+        events.map((e): Activity => {
+          const time = timeAgo(e.date)
+          return e.__typename === "NewBookEvent"
+            ? { type: "alta", book: e.bookTitle, owner: e.user, time }
+            : {
+                type: "reserva",
+                text: `Reserva de ${e.bookTitle} · ${e.user}`,
+                time,
+              }
+        }),
+      )
     } catch (error) {
       showToast.httpError(error)
     }
@@ -142,7 +120,7 @@ export default function ControlPanel() {
   useOnInit(() => {
     getConversionRate()
     getBookTypeCalification()
-    getCatalogHealth()
+    getRecentActivity()
   })
 
   return (
@@ -154,9 +132,7 @@ export default function ControlPanel() {
           headerRight={
             <span>
               Total{" "}
-              <span className="font-bold text-gray-900">
-                {catalogHealth?.total ?? 0}
-              </span>
+              <span className="font-bold text-gray-900">{TOTAL_BOOKS}</span>
             </span>
           }
         >
