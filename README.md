@@ -1,4 +1,4 @@
-# BookLibre
+# 📚 BookLibre
 
 > A peer-to-peer platform for lending physical books, with gamification, polyglot persistence and a real-time analytics dashboard
 
@@ -257,7 +257,7 @@ The application is deployed on **Render** with the following setup:
 | Book catalog | MongoDB Atlas |
  
 ---
-## 👩‍💻 Team Project
+## Team Project
 - Catalina Correa
 - Nicolas Cernadas
 - Dana Cossettini Reyes
@@ -265,7 +265,7 @@ The application is deployed on **Render** with the following setup:
 - Fernanda Perez
 ---
  
-## 📫 Contact
+## Contact
  
 **Dana Cossettini Reyes** -
 📧 dana2004c.r@gmail.com
